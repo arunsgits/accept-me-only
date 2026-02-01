@@ -12,15 +12,23 @@
       <div class="hearts" aria-hidden="true"></div>
       <h1>YAY — You said YES! 🎉</h1>
       <p class="message">My heart is doing a happy dance — thank you for being mine! Let's make every day adorable together. 🌸💖</p>
-      <p class="tiny">(You made my whole year — can't wait to spoil you!)</p>
+      <p id="proposalNote" class="tiny">(You made my whole year — can't wait to spoil you!)</p>
       <a class="btn home" href="index.html">Back to start 💌</a>
     </div>
   </main>
 
+  <script src="js/params.js"></script>
   <script>
-    // gentle sparkle on load
+    // gentle sparkle on load and personalize the message if `porposal-by` present
     document.addEventListener('DOMContentLoaded', ()=>{
       document.querySelector('.card').classList.add('celebrate');
+      try{
+        const name = window.__proposal && window.__proposal.getName && window.__proposal.getName();
+        const note = document.getElementById('proposalNote');
+        if(name && note){
+          note.textContent = name + " proposed to you — you said YES! 💖";
+        }
+      }catch(e){}
     });
   </script>
 </body>

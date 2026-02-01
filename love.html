@@ -13,7 +13,10 @@
       <h1>YAY — You said YES! 🎉</h1>
       <p class="message">My heart is doing a happy dance — thank you for being mine! Let's make every day adorable together. 🌸💖</p>
       <p id="proposalNote" class="tiny">(You made my whole year — can't wait to spoil you!)</p>
-      <a class="btn home" href="index.html">Back to start 💌</a>
+      <div style="margin-top:12px;display:flex;gap:.6rem;align-items:center;justify-content:center;flex-wrap:wrap">
+        <button id="notifyBtn" class="btn" style="display:none;background:#ffdfe9;border:1px solid #ffb6d1;color:#8b4f66;padding:.55rem .9rem">Notify proposer 💌</button>
+        <a class="btn home" href="index.html">Back to start 💌</a>
+      </div>
     </div>
   </main>
 
@@ -27,6 +30,20 @@
         const note = document.getElementById('proposalNote');
         if(name && note){
           note.textContent = name + " proposed to you — you said YES! 💖";
+        }
+
+        // show notify button if an email param exists
+        const params = new URLSearchParams(window.location.search);
+        const proposerEmail = params.get('porposal-email');
+        const notify = document.getElementById('notifyBtn');
+        if(proposerEmail && notify){
+          notify.style.display = 'inline-block';
+          notify.addEventListener('click', function(){
+            const subject = encodeURIComponent('I said YES to your proposal! 💖');
+            const body = encodeURIComponent('Hello ' + (name||'') + ',%0D%0A%0D%0AI accepted your proposal. I said YES! 🎉%0D%0A%0D%0ASee you soon ❤️');
+            // open mail client
+            window.location.href = 'mailto:' + proposerEmail + '?subject=' + subject + '&body=' + body;
+          });
         }
       }catch(e){}
     });

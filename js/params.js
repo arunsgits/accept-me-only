@@ -2,43 +2,47 @@
 (function(){
   function getProposalName(){
     try{
-      const p = new URLSearchParams(window.location.search).get('porposal-by');
-      return p ? decodeURIComponent(p) : null;
+      return new URLSearchParams(window.location.search).get('porposal-by') || null;
     }catch(e){return null}
   }
 
-  function appendParamToHref(href, name){
-    if(!name) return href;
+  function getProposalEmail(){
     try{
-      const url = new URL(href, window.location.origin);
-      // only append for same-origin html files
-      if(url.origin !== window.location.origin) return href;
-      if(!/\.html$/.test(url.pathname)) return href;
-      const params = new URLSearchParams(url.search);
-      params.set('porposal-by', name);
-      url.search = params.toString();
-      return url.pathname + (url.search? ('?'+url.search.replace(/^\?/,'') ) : '') + (url.hash||'');
-    }catch(e){return href}
+      return new URLSearchParams(window.location.search).get('porposal-email') || null;
+    }catch(e){return null}
+  }
+
+  // Append params to relative/internal hrefs as a string so file:// and GitHub Pages keep correct paths
+  function appendParamsToHref(href, name, email){
+    if(!name) return href;
+    if(!href) return href;
+    const low = href.trim();
+    // ignore anchors, mailto, external links, protocols
+    if(low.startsWith('#') || low.startsWith('mailto:') || low.startsWith('http') || low.startsWith('//') || low.startsWith('javascript:')) return href;
+    // avoid double-adding
+    if(href.indexOf('porposal-by=') !== -1) return href;
+    const sep = href.indexOf('?') !== -1 ? '&' : '?';
+    let out = href + sep + 'porposal-by=' + encodeURIComponent(name);
+    if(email) out += '&porposal-email=' + encodeURIComponent(email);
+    return out;
   }
 
   function forward(){
     const name = getProposalName();
     if(!name) return;
-    // update all internal anchors
+    const email = getProposalEmail();
     document.querySelectorAll('a[href]').forEach(a=>{
       const href = a.getAttribute('href');
       if(!href) return;
-      if(href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('http')) return;
-      // compute new href
-      const newHref = appendParamToHref(href, name);
-      a.setAttribute('href', newHref);
+      const newHref = appendParamsToHref(href, name, email);
+      if(newHref !== href) a.setAttribute('href', newHref);
     });
   }
 
-  // run on DOM ready
   document.addEventListener('DOMContentLoaded', forward);
 
   // expose getter
   window.__proposal = window.__proposal || {};
   window.__proposal.getName = getProposalName;
+  window.__proposal.getEmail = getProposalEmail;
 })();

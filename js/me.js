@@ -5,20 +5,25 @@
   const share = document.getElementById('shareLink');
   const copy = document.getElementById('copyBtn');
 
-  function makeLink(name){
+  function makeLink(name, email){
     const safe = encodeURIComponent(name.trim());
-    return 'index.html?porposal-by=' + safe;
+    let url = 'index.html?porposal-by=' + safe;
+    if(email && email.trim()){
+      url += '&porposal-email=' + encodeURIComponent(email.trim());
+    }
+    return url;
   }
 
   function update(){
     const name = input.value.trim();
+    const email = (document.getElementById('emailInput')||{}).value || '';
     if(!name){
       share.textContent = 'index.html?porposal-by=YourName';
       share.href = '#';
       share.classList.remove('yes');
       return;
     }
-    const link = makeLink(name);
+    const link = makeLink(name, email);
     share.textContent = link;
     share.href = link;
     share.classList.add('yes');

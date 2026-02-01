@@ -39,10 +39,34 @@
         if(proposerEmail && notify){
           notify.style.display = 'inline-block';
           notify.addEventListener('click', function(){
-            const subject = encodeURIComponent('I said YES to your proposal! 💖');
-            const body = encodeURIComponent('Hello ' + (name||'') + ',%0D%0A%0D%0AI accepted your proposal. I said YES! 🎉%0D%0A%0D%0ASee you soon ❤️');
-            // open mail client
-            window.location.href = 'mailto:' + proposerEmail + '?subject=' + subject + '&body=' + body;
+            // send via AJAX to server-side PHP endpoint
+            notify.disabled = true;
+            notify.textContent = 'Notifying...';
+            const subject = 'I said YES to your proposal! 💖';
+            const body = 'Hello ' + (name||'') + ',\n\nI accepted your proposal. I said YES! 🎉\n\nSee you soon ❤️';
+
+            const form = new URLSearchParams();
+            form.append('to', proposerEmail);
+            form.append('subject', subject);
+            form.append('message', body);
+
+            fetch('send_mail.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+              body: form.toString()
+            }).then(res=>res.json()).then(json=>{
+              if(json && json.ok){
+                notify.textContent = 'Notified ✓';
+              } else {
+                notify.textContent = 'Send failed';
+                notify.disabled = false;
+                alert('Notification failed: ' + (json && json.error ? json.error : 'unknown'));
+              }
+            }).catch(err=>{
+              notify.textContent = 'Send failed';
+              notify.disabled = false;
+              alert('Notification error: ' + err.message);
+            });
           });
         }
       }catch(e){}

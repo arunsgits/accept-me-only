@@ -39,11 +39,19 @@
         if(proposerEmail && notify){
           notify.style.display = 'inline-block';
           notify.addEventListener('click', function(){
-            // send via AJAX to server-side PHP endpoint
-            notify.disabled = true;
-            notify.textContent = 'Notifying...';
             const subject = 'I said YES to your proposal! 💖';
             const body = 'Hello ' + (name||'') + ',\n\nI accepted your proposal. I said YES! 🎉\n\nSee you soon ❤️';
+            const mailto = 'mailto:' + proposerEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+            // If site is hosted on GitHub Pages or opened via file://, PHP won't run — fall back to mailto
+            if(window.location.protocol === 'file:' || (window.location.hostname && window.location.hostname.endsWith('github.io'))){
+              window.location.href = mailto;
+              return;
+            }
+
+            // otherwise try AJAX to server endpoint
+            notify.disabled = true;
+            notify.textContent = 'Notifying...';
 
             const form = new URLSearchParams();
             form.append('to', proposerEmail);
@@ -54,7 +62,14 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
               body: form.toString()
-            }).then(res=>res.json()).then(json=>{
+            }).then(res=>{
+              if(res.status === 405){
+                // server does not allow POST (e.g., GitHub Pages) — fallback
+                window.location.href = mailto;
+                return Promise.reject(new Error('Server does not accept POST (405)'));
+              }
+              return res.json();
+            }).then(json=>{
               if(json && json.ok){
                 notify.textContent = 'Notified ✓';
               } else {
@@ -63,9 +78,10 @@
                 alert('Notification failed: ' + (json && json.error ? json.error : 'unknown'));
               }
             }).catch(err=>{
+              // fallback to mail client
               notify.textContent = 'Send failed';
               notify.disabled = false;
-              alert('Notification error: ' + err.message);
+              try{ window.location.href = mailto; }catch(_){ }
             });
           });
         }

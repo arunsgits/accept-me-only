@@ -18,3 +18,15 @@ h1{font-family:'Fredoka One', cursive;margin:0 0 .35rem;color:var(--accent);font
 
 /* small responsive */
 @media (max-width:420px){.card{padding:1.6rem} .btn{padding:.7rem 1rem}}
+
+/* mobile improvements */
+@media (max-width:600px){
+  .page{padding:1rem;max-width:420px}
+  .card{padding:1.4rem;border-radius:14px}
+  h1{font-size:1.6rem}
+  .subtitle{font-size:.95rem}
+  .buttons{align-items:stretch;gap:.8rem}
+  .btn{width:100%;padding:.9rem 1rem;font-size:15px}
+  .btn.yes{box-shadow:0 10px 22px rgba(255,90,140,0.18)}
+  .hint{font-size:.9rem}
+}

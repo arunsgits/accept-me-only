@@ -21,3 +21,12 @@ h1{color:var(--accent);font-size:2.2rem;margin:0}
   content:"💖 💕 💘 💝";position:absolute;left:10%;top:8%;font-size:22px;animation:fall 3.6s linear infinite}
 .card.celebrate::before{
   content:"💞 💓";position:absolute;right:8%;top:0;font-size:20px;animation:fall 4.5s linear infinite}
+
+@media (max-width:600px){
+  .page{padding:1rem;max-width:420px}
+  .card{padding:1.2rem;border-radius:14px}
+  h1{font-size:1.6rem}
+  .message{font-size:1rem}
+  .tiny{font-size:.9rem}
+  .btn.home{display:block;width:100%;padding:.8rem 1rem;font-size:15px;margin-top:.9rem}
+}

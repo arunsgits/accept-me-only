@@ -13,3 +13,12 @@ h1{color:var(--accent);font-size:2rem;margin:0}
 .btn:hover{transform:translateY(-3px)}
 .note{color:#c48a97;margin-top:1rem}
 @media (max-width:420px){.card{padding:1.4rem}}
+
+@media (max-width:600px){
+	.card{padding:1.2rem;border-radius:14px;margin:1rem}
+	h1{font-size:1.4rem}
+	.subtitle{font-size:.95rem}
+	.buttons{align-items:stretch;gap:.8rem}
+	.btn{width:100%;padding:.85rem 0.5rem;font-size:15px}
+	.note{font-size:.9rem}
+}
